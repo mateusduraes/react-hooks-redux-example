@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react'
 
 function App() {
+  const [techList, setTechlist] = useState([])
+  const [newTech, setNewTech] = useState('')
+
+  useEffect(() => {
+    const techListStorage = localStorage.getItem('techList')
+    if (techListStorage) {
+      setTechlist(JSON.parse(techListStorage))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('techList', JSON.stringify(techList))
+  }, [techList])
+
+  const addNewTech = () => {
+    setTechlist([...techList, newTech])
+    setNewTech('')
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>TechList</h1>
+      <ul>
+        {techList.map(t => (
+          <li key={t}>{t}</li>
+        ))}
+      </ul>
+      <input
+        type="text"
+        placeholder="Add a new technology"
+        value={newTech}
+        onChange={e => setNewTech(e.target.value)}
+      />
+      <button type="button" onClick={addNewTech}>
+        Add
+      </button>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
