@@ -1,22 +1,28 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 function App() {
-  const [techList, setTechlist] = useState([])
+  const techList = useSelector(state => state)
+  const dispatch = useDispatch()
   const [newTech, setNewTech] = useState('')
+  const techListSize = useMemo(() => techList.length, [techList])
 
   useEffect(() => {
     const techListStorage = localStorage.getItem('techList')
     if (techListStorage) {
-      setTechlist(JSON.parse(techListStorage))
+      dispatch({
+        type: '@tech/initialize',
+        payload: JSON.parse(techListStorage),
+      })
     }
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     localStorage.setItem('techList', JSON.stringify(techList))
   }, [techList])
 
   const addNewTech = () => {
-    setTechlist([...techList, newTech])
+    dispatch({ type: '@tech/add', payload: newTech })
     setNewTech('')
   }
 
@@ -37,6 +43,7 @@ function App() {
       <button type="button" onClick={addNewTech}>
         Add
       </button>
+      <p>You have {techListSize} technologies added</p>
     </div>
   )
 }
